@@ -18,7 +18,6 @@ module.exports = function(req, res) {
   var response;
   try {
     response = sync.await(request({
-      // https://developers.soundcloud.com/docs/api/reference#tracks
       url: 'https://api.nytimes.com/svc/search/v2/articlesearch.json',
       qs: {
         q: term,
@@ -41,12 +40,11 @@ module.exports = function(req, res) {
 
   var results = _.chain(response.body.response.docs)
     .reject(function(data) {
-      // Filter out results without artwork.
-      return !Array.isArray(data.multimedia); //|| !(data.multimedia.length >= 3);
+      // Filter out results without multimedia
+      return !Array.isArray(data.multimedia);
     })
     .map(function(data) {
       return {
-        resolve: false,
         title: createTemplate(data),
         text: data.web_url
       };
